@@ -19,12 +19,12 @@ describe 'SpreeGenerator' do
   end
 
   before do
-       
+
     before_each_spree   # inits tests, cleans DB setups model types
-    
+
     # Create some test data
     root = @Taxonomy_klass.create( :name => 'Paintings' )
-    
+
     if(DataShift::SpreeEcom::version.to_f > 1 )
       root.taxons.create( :name => 'Landscape' )
       root.taxons.create( :name => 'Sea' )
@@ -43,9 +43,9 @@ describe 'SpreeGenerator' do
     excel.generate(@Taxonomy_klass)
 
     expect(File.exists?(expected)).to eq true
-    
+
     puts "You can check results manually in file #{expected}"
-    
+
     expected = result_file('taxon_export_spec.xls')
 
     excel.filename = expected
@@ -53,9 +53,9 @@ describe 'SpreeGenerator' do
     excel.generate(@Taxon_klass)
 
     expect(File.exists?(expected)).to eq true
-    
+
     puts "You can check results manually in file #{expected}"
-    
+
   end
 
   it "should export Spree Product and all associations to .xls spreedsheet" do
@@ -63,27 +63,27 @@ describe 'SpreeGenerator' do
     expected = result_file('product_and_assoc_export_spec.xls')
 
     excel = DataShift::ExcelGenerator.new(expected)
-      
+
     excel.generate_with_associations(@Product_klass)
 
     expect(File.exists?(expected)).to eq true
 
     puts "You can check results manually in file #{expected}"
-    
+
   end
-    
+
   it "should be able to exclude single associations from template" do
 
     expected = result_file('product_and_assoc_export_spec.xls')
 
     excel = DataShift::ExcelGenerator.new(expected)
-      
+
     excel.generate_with_associations(@Product_klass, :exclude => :has_many)
 
     expect(File.exists?(expected)).to eq true
 
     puts "You can check results manually in file #{expected}"
-    
+
   end
-  
+
 end

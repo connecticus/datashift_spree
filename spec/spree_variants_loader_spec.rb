@@ -101,7 +101,7 @@ describe 'Spree Variants Loader' do
 
     v1.sku.should == "DEMO_001_1"
     v1.price.should == 399.99
-    
+
     # TOFIX - update for Spree 2 - not sure how count_on_hand has morphed into stock_items
     #puts v1.stock_items.first.count_on_hand
     #puts expect(v1.stock_items.first.count_on_hand).to eq 12
@@ -126,7 +126,7 @@ describe 'Spree Variants Loader' do
     v3.option_values[0].name.should == "PNG"
 
     @Variant_klass.last.price.should == 50.34
-    
+
     # TOFIX - update for Spree 2 - not sure how count_on_hand has morphed into stock_items
     #@Variant_klass.last.count_on_hand.should == 18
 
@@ -147,9 +147,9 @@ describe 'Spree Variants Loader' do
 
     expected_single_column_multi_variants
   end
-  
+
   def expected_single_column_multi_variants
-    
+
     # Product 1)
     # 1 + 2) mime_type:jpeg,PDF ; print_type:colour	 equivalent to (mime_type:jpeg;print_type:colour|mime_type:PDF;print_type:colour)
     # 3) mime_type:PNG
@@ -163,7 +163,7 @@ describe 'Spree Variants Loader' do
     p = @Product_klass.where(name: 'Demo Product for AR Loader').first
 
     expect(p.variants_including_master.size).to eq 4
-    expect(p.variants.size).to eq 3 
+    expect(p.variants.size).to eq 3
 
     expect(p.option_types.size).to eq 2  # mime_type, print_type
     expect(p.option_types.collect(&:name).sort).to eq ['mime_type','print_type']
@@ -179,8 +179,8 @@ describe 'Spree Variants Loader' do
     # 5) mime_type:PNG;print_type:black_white
     #
     p = @Product_klass.all[1]
-    
-    expect(p.variants_including_master.size).to eq 3 
+
+    expect(p.variants_including_master.size).to eq 3
     expect(p.variants.size).to eq 2
 
     expect( p.option_types.size).to eq 2  # mime_type, print_type
@@ -189,16 +189,16 @@ describe 'Spree Variants Loader' do
 
     expect(p.variants[0].option_values.collect(&:name).sort).to eq ['black_white','jpeg']
     expect(p.variants[0].option_values.collect(&:presentation).sort).to eq ['Black white','Jpeg']
-    
+
     expect(p.variants[1].option_values.collect(&:name).sort).to eq ['PNG', 'black_white']
-    
+
     # Product 3
     # 6 +7) mime_type:jpeg;print_type:colour,sepia;size:large
     # 8) mime_type:jpeg;print_type:colour
     # 9) mime_type:PNG
     # 9 + 10) mime_type:PDF|print_type:black_white
 
-        
+
   end
 
 

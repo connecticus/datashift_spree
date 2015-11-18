@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-# This Gemfile is for TESTING really. 
+# This Gemfile is for TESTING really.
 # Not sure it has any use for anyone just wanting to use this gem
 
 # DEFINE VERSIONS YOU WANT TO TEST AGAINST HERE

@@ -6,9 +6,9 @@
 #
 # Details::   Specification for Spree aspect of datashift gem.
 #
-#             Tests the method mapping aspect, such as that we correctly identify 
+#             Tests the method mapping aspect, such as that we correctly identify
 #             Spree Product attributes and associations
-#             
+#
 require File.join(File.expand_path(File.dirname(__FILE__) ), "spec_helper")
 
 describe 'SpreeMethodMapping' do
@@ -22,7 +22,7 @@ describe 'SpreeMethodMapping' do
   let (:product) { Spree::Product.new }
 
   it "should populate operators for a Spree Product" do
-     
+
     DataShift::MethodDictionary.has_many.should_not be_empty
     DataShift::MethodDictionary.belongs_to.should_not be_empty
     DataShift::MethodDictionary.assignments.should_not be_empty
@@ -91,9 +91,9 @@ describe 'SpreeMethodMapping' do
 
     # Example of delegates i.e. cost_price column on Variant, delegated to Variant by Product
 
-    # Spree 2 .. count_on_hand replaced by StockItems 
+    # Spree 2 .. count_on_hand replaced by StockItems
     # mgr = DataShift::MethodDictionary.get_method_details_mgr(@Product_klass)
-    # puts mgr.available_operators_with_type.inspect  
+    # puts mgr.available_operators_with_type.inspect
     DataShift::MethodDictionary.assignments[@Product_klass].should include('cost_currency')
     DataShift::MethodDictionary.assignments[@Product_klass].should include('cost_price')
     DataShift::MethodDictionary.assignments[@Product_klass].should include('sku')
@@ -105,7 +105,7 @@ describe 'SpreeMethodMapping' do
     md1 = DataShift::MethodDictionary.find_method_detail( @Product_klass, 'Cost Price' )
     expect(md1).to be_a DataShift::MethodDetail
     expect(md1.operator).to eq 'cost_price'
-    
+
     md2 = DataShift::MethodDictionary.find_method_detail( @Product_klass, 'sku' )
     expect(md2).to be_a DataShift::MethodDetail
     expect(md2.operator).to eq 'sku'
@@ -117,14 +117,14 @@ describe 'SpreeMethodMapping' do
 
     # we can use method details to populate a new AR object, essentailly same as
     # klazz_object.send( count_on_hand.operator, 2)
-    
-    # Spree 2 .. count_on_hand replaced by StockItems  
+
+    # Spree 2 .. count_on_hand replaced by StockItems
     price_md = DataShift::MethodDictionary.find_method_detail( @Product_klass, 'cost_price' )
 
     populator.prepare_and_assign(price_md, product, 2.23 )
     expect(product.cost_price).to eq 2.23
 
-    
+
     populator.prepare_and_assign(price_md, product, 5.45 )
     expect(product.cost_price).to eq 5.45
 
@@ -140,9 +140,9 @@ describe 'SpreeMethodMapping' do
 
   end
 
-  
+
   it "should enable assignment to belongs_to association on Product" do
-        
+
     method_detail = DataShift::MethodDictionary.find_method_detail( @Product_klass, 'shipping_category' )
 
     expect(method_detail.operator).to eq 'shipping_category'
@@ -150,8 +150,8 @@ describe 'SpreeMethodMapping' do
     expect(method_detail.operator_class_name).to eq 'Spree::ShippingCategory'
     expect(method_detail.operator_class).to be_a(Class)
     expect(method_detail.operator_class).to eq Spree::ShippingCategory
-    
-    
+
+
     method_detail = DataShift::MethodDictionary.find_method_detail( @Product_klass, 'tax_category' )
 
     expect(method_detail.operator).to eq 'tax_category'
@@ -160,10 +160,10 @@ describe 'SpreeMethodMapping' do
     expect(method_detail.operator_class).to be_a(Class)
     expect(method_detail.operator_class).to eq Spree::TaxCategory
   end
-    
+
 
   it "should enable assignment to has_many association on new object", :fail => true do
- 
+
 
     method_detail = DataShift::MethodDictionary.find_method_detail( @Product_klass, 'taxons' )
 
@@ -202,7 +202,7 @@ describe 'SpreeMethodMapping' do
     klazz_object = @Product_klass.new
 
     pp = @ProductProperty_klass.new
-    
+
     pp.property = @prop1
 
     # NEW ASSOCIATION ASSIGNMENT
@@ -227,118 +227,118 @@ describe 'SpreeMethodMapping' do
   end
 
   it "should leave nil entries when no method_detail found for inbound headers" do
-    
+
     DataShift::ModelMethodsManager.find_methods( @Product_klass, :instance_methods => true )
- 
+
     DataShift::MethodDictionary.build_method_details(@Product_klass)
-    
+
     headers = ['BLAH', 'Weight', :rubbish,  :variants]
-    
+
     method_mapper = DataShift::MethodMapper.new
-     
+
     method_details = method_mapper.map_inbound_headers_to_methods( @Product_klass, headers )
-    
+
     expect(method_details.compact.size).to eq 2
 
     expect(method_details.size).to eq 4
-    
+
     method_details[0].should be_nil
     method_details[2].should be_nil
-    
+
   end
-  
+
   it "should add 'null' type method details for :force_inclusion items when no method_detail found" do
-    
+
     DataShift::ModelMethodsManager.find_methods( @Product_klass, :instance_methods => true )
- 
+
     DataShift::MethodDictionary.build_method_details(@Product_klass)
-    
+
     headers = ['BLAH', 'Weight', :rubbish,  :variants]
-    
+
     method_mapper = DataShift::MethodMapper.new
-    
+
     options = { :force_inclusion => ['blah', :rubbish] }
-   
+
     method_details = method_mapper.map_inbound_headers_to_methods( @Product_klass, headers, options )
-    
+
     expect(method_details[0].name).to eq 'BLAH'
     expect(method_details[0].operator).to eq 'BLAH'
     method_details[0].col_type.should be_nil
-      
+
     expect(method_details.compact.size).to eq 4
 
     expect(method_details.size).to eq 4
   end
-    
+
   it "should ignore :force_inclusion items if they are genuine columns" do
-    
+
     DataShift::ModelMethodsManager.find_methods( @Product_klass, :instance_methods => true )
- 
+
     DataShift::MethodDictionary.build_method_details(@Product_klass)
-    
+
     headers = ['VARIANTS', 'BLAH_SHOULD_BE_NULL_MD', 'Weight', :rubbish_should_be_nil]
-    
+
     method_mapper = DataShift::MethodMapper.new
-     
+
     options = { :force_inclusion => ['blah_SHOULD_be_null_MD', 'weight', :variants] }
-   
+
     method_details = method_mapper.map_inbound_headers_to_methods( @Product_klass, headers, options )
-    
+
     expect(method_details.compact.size).to eq 3
-    
+
     expect(method_details.size).to eq 4
-    
-    expect(method_details[0].name).to eq 'VARIANTS' 
+
+    expect(method_details[0].name).to eq 'VARIANTS'
     expect(method_details[0].operator).to eq 'variants'
     expect(method_details[0].operator_type).to eq :has_many
-    
-    expect(method_details[1].name).to eq 'BLAH_SHOULD_BE_NULL_MD' 
+
+    expect(method_details[1].name).to eq 'BLAH_SHOULD_BE_NULL_MD'
     expect(method_details[1].operator_type).to eq :assignment
     expect(method_details[1].col_type).to be_nil
-    
+
   end
-  
-  
+
+
   it "should find all method_details for instance methods based on inbound headers" do
-    
+
     DataShift::ModelMethodsManager.find_methods( @Product_klass, :instance_methods => true )
- 
+
     DataShift::MethodDictionary.build_method_details(@Product_klass)
-    
+
     headers = ['SKU', 'Sku', :cost_price, 'PRICE', :junk, 'Weight']
     expected = ['sku', 'sku', 'cost_price', 'price', 'weight']
-        
+
     method_mapper = DataShift::MethodMapper.new
-     
+
     method_details = method_mapper.map_inbound_headers_to_methods( @Product_klass, headers )
-    
+
     expect(method_details.size).to eq 6
-    
+
     expect(method_details.compact.size).to eq 5
-    
+
     expect(method_details.compact.collect(&:operator)).to eq expected
-    
+
   end
-  
-  
+
+
    it "should find all method_details for belongs_to based on inbound headers" do
-    
+
     DataShift::ModelMethodsManager.find_methods( @Product_klass, :instance_methods => true )
- 
+
     DataShift::MethodDictionary.build_method_details(@Product_klass)
 
     headers = ['shipping category', 'shipping_category', :shipping_category, 'Shipping_Category', 'shipping Category']
     expected = 'shipping_category'
-        
+
     method_mapper = DataShift::MethodMapper.new
-     
+
     method_details = method_mapper.map_inbound_headers_to_methods( @Product_klass, headers )
 
     expect(method_details.size).to eq 5
-    
+
     expect(method_details.compact.size).to eq 5
 
     method_details.compact.collect(&:operator).each { |o| expect(o).to eq expected }
   end
-  
+
 end
