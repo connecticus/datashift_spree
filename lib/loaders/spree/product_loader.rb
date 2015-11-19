@@ -70,6 +70,7 @@ module DataShift
 
         # TODO - start supporting assigning extra data via current_attribute_hash
         current_value, current_attribute_hash = @populator.prepare_data(method_detail, value)
+        return if current_value.blank?
 
         current_method_detail = method_detail
 
