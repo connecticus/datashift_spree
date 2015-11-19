@@ -110,7 +110,7 @@ module DataShift
 
               if(@load_object.variants.size == values.size)
                 @load_object.variants.each_with_index {|v, i| v.price = values[i].to_f }
-                @load_object.save
+                @load_object.variants.each(&:save)
               else
                 puts "WARNING: Price entries did not match number of Variants - None Set"
               end
@@ -131,7 +131,7 @@ module DataShift
 
               if(@load_object.variants.size == values.size)
                 @load_object.variants.each_with_index {|v, i| v.cost_price = values[i].to_f }
-                @load_object.save
+                @load_object.variants.each(&:save)
               else
                 puts "WARNING: Cost Price entries did not match number of Variants - None Set"
               end
@@ -152,7 +152,7 @@ module DataShift
 
               if(@load_object.variants.size == values.size)
                 @load_object.variants.each_with_index {|v, i| v.sku = values[i].to_s }
-                @load_object.save
+                @load_object.variants.each(&:save)
               else
                 puts "WARNING: SKU entries did not match number of Variants - None Set"
               end
