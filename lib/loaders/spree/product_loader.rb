@@ -186,7 +186,7 @@ module DataShift
             if(current_value.to_s.include?(Delimiters::multi_assoc_delim))
 
               # Check if we processed Option Types and assign  per option
-              values = current_value.to_s.split(Delimiters::multi_assoc_delim)
+              values = current_value.to_s.split(Delimiters::multi_assoc_delim).map(&:strip)
 
               if(@load_object.variants.size == values.size)
                 @load_object.variants.each_with_index {|v, i| v.sku = values[i].to_s }
@@ -254,7 +254,7 @@ module DataShift
 
         variants.each do |per_variant|
 
-          option_types = per_variant.split(Delimiters::multi_facet_delim)    # => [mime_type:jpeg, print_type:black_white]
+          option_types = per_variant.split(Delimiters::multi_facet_delim).map(&:strip)    # => [mime_type:jpeg, print_type:black_white]
 
           logger.info "Checking Option Types #{option_types.inspect}"
 
@@ -262,7 +262,7 @@ module DataShift
 
           option_types.each do |ostr|
 
-            oname, value_str = ostr.split(Delimiters::name_value_delim)
+            oname, value_str = ostr.split(Delimiters::name_value_delim).map(&:strip)
 
             option_type = @@option_type_klass.where(:name => oname).first
 
@@ -286,7 +286,7 @@ module DataShift
             optiontype_vlist_map[option_type] ||= []
 
             # Now get the value(s) for the option e.g red,blue,green for OptType 'colour'
-            optiontype_vlist_map[option_type] += value_str.split(',').flatten
+            optiontype_vlist_map[option_type] += value_str.split(',').map(&:strip).flatten
 
             logger.debug("Parsed OptionValues #{optiontype_vlist_map[option_type]} for Option_Type #{option_type.name}")
           end
@@ -400,7 +400,7 @@ module DataShift
         chain_list.each do |chain|
 
           # Each chain can contain either a single Taxon, or the tree like structure parent>child>child
-          name_list = chain.split(/\s*>\s*/)
+          name_list = chain.split(/\s*>\s*/).map(&:strip)
 
           parent_name = name_list.shift
 
