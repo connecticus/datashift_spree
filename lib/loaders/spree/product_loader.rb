@@ -117,6 +117,10 @@ module DataShift
               end
             end
 
+          else
+            super
+          end
+
         elsif(current_method_detail.operator?('variant_p3_price') && current_value)
           if(@load_object.variants.size > 0)
 
