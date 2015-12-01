@@ -43,7 +43,7 @@ module DataShift
         # In >= 1.1.0 Image moved to master Variant from Product so no association called Images on Product anymore
 
         # Non Product/database fields we can still process
-        @we_can_process_these_anyway =  ["images","variant_sku","variant_cost_price","variant_price","variant_coefficient","variant_images","stock_items"]
+        @we_can_process_these_anyway =  ["images","variant_sku","variant_cost_price","variant_price","variant_coefficient","variant_images","stock_items", "variant_p3_price"]
 
         # In >= 1.3.0 price moved to master Variant from Product so no association called Price on Product anymore
         # taking care of it here, means users can still simply just include a price column
@@ -114,6 +114,22 @@ module DataShift
                 @load_object.variants.each(&:save)
               else
                 puts "WARNING: Price entries did not match number of Variants - None Set"
+              end
+            end
+
+        elsif(current_method_detail.operator?('variant_p3_price') && current_value)
+          if(@load_object.variants.size > 0)
+
+            if(current_value.to_s.include?(Delimiters::multi_assoc_delim))
+
+              # Check if we processed Option Types and assign  per option
+              values = current_value.to_s.split(Delimiters::multi_assoc_delim)
+
+              if(@load_object.variants.size == values.size)
+                @load_object.variants.each_with_index {|v, i| v.p3_price = values[i].to_f }
+                @load_object.variants.each(&:save)
+              else
+                puts "WARNING: P3 Price entries did not match number of Variants - None Set"
               end
             end
 
