@@ -32,7 +32,7 @@ module DatashiftSpree
 
       cleanup =  %w{ Image OptionType OptionValue
                     Product Property ProductProperty ProductOptionType
-                    Variant
+                    Variant Price
       }
 
       cleanup += ["Taxonomy", "Taxon"] if(options[:taxons])
